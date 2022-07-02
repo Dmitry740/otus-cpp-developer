@@ -1,2 +1,2 @@
-# otus---cpp---developer
+# otus-cpp-developer
 OTUS C++ home work
