@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.8)
 
 project(hello CXX)
 
-add_executable(hello example.cpp hello_world.cpp)
+add_executable(hello example.cpp move_me_out.cpp hello_world.cpp)
 
 target_compile_features(hello PUBLIC cxx_std_17)
 
