@@ -1,5 +1,4 @@
 #include "example.h"
-
 #include <iostream>
 
 void example_function()
