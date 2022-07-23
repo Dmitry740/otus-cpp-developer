@@ -4,13 +4,7 @@
 #include <string>
 
 int main(int argc, char** argv) {
-	
-	// std::string table = argv[1];
-	// if (table == "-table") {
-	// 	PrintScoresTable();
-	// 	return 0;
-	// 	}
-	
+			
 	//change max value through console
 	int parametr_value = 120;
 	

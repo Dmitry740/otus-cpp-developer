@@ -37,6 +37,7 @@ std::ifstream in_file{high_scores_filename};
 	int min_score = 100;
 	std::string name;
 		
+		//new version of printing High score table
 		while(true) {
 		
 					
@@ -64,7 +65,7 @@ std::ifstream in_file{high_scores_filename};
 			
 		
 	
-
+    //old version of printing High score table
 	// while (true)
 	// {
 	// in_file >> username;
