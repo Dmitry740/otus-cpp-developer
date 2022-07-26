@@ -13,12 +13,12 @@ add_executable(
 # 	random_value.cpp
 # )
 
-add_executable(
-	high_scores
-	high_scores.cpp
-)
+# add_executable(
+# 	high_scores
+# 	high_scores.cpp
+# )
 
-add_executable(
-	argument
-	argument.cpp
-)
+# add_executable(
+# 	argument
+# 	argument.cpp
+# )

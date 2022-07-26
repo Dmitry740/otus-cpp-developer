@@ -3,10 +3,9 @@
 #include <fstream>
 #include <string>
 
-int main(int argc, char** argv) {
+int main(int argc, char* argv[]) {
 			
 	//change max value through console
-	int parametr_value = 120;
 	
 	if (argc > 0) {
 		std::cout << "We have at least one argument!" << std::endl;
@@ -18,6 +17,7 @@ int main(int argc, char** argv) {
 		std::cout << std::endl;
 	}
 
+	int parametr_value = 120;
 	if (argc >= 2) {
 		std::cout << "We have one more argument = " << argv[1] << std::endl;
 		
@@ -35,23 +35,23 @@ int main(int argc, char** argv) {
 
 			parametr_value = std::stoi(argv[2]);
 
-				if (argv1_value == "-level" && parametr_value == 1) {
-					parametr_value = 10;
-				}
-				if (argv1_value == "-level" && parametr_value == 2) {
-					parametr_value = 50;
-				}
-				if (argv1_value == "-level" && parametr_value == 3) {
-					parametr_value = 100;
-				}
-			
-			std::cout << "The '-max' value = " << parametr_value << std::endl;
+			if (argv1_value == "-level" && parametr_value == 1) {
+				parametr_value = 10;
+			}
+			 else if (argv1_value == "-level" && parametr_value == 2) {
+				parametr_value = 50;
+			}
+			else if (argv1_value == "-level" && parametr_value == 3) {
+				parametr_value = 100;
+			}
+			else {
+				std::cout << "Error: Permited numbers are '1', '2', '3'!" << std::endl;
+				return -1;
+			}
 		}
 	}
+	std::cout << "The '-max' value = " << parametr_value << std::endl;
 	
-	
-	const std::string high_scores_filename = "high_scores.txt";
-
 	// Ask about name and start the game
 	std::cout << "Hi! Enter your name, please:" << std::endl;
 	std::string user_name;
@@ -65,6 +65,7 @@ int main(int argc, char** argv) {
 	std::cout << "Enter your guess:" << std::endl;
 	int attempts = 1;
 
+	//game
 	do {
 		std::cin >> current_value;
 		if(std::cin.fail()) {
