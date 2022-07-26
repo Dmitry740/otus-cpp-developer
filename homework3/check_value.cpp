@@ -6,7 +6,6 @@
 int main(int argc, char* argv[]) {
 			
 	//change max value through console
-	
 	if (argc > 0) {
 		std::cout << "We have at least one argument!" << std::endl;
 		std::cout << "argv[0] = " << argv[0] << std::endl;
@@ -20,7 +19,6 @@ int main(int argc, char* argv[]) {
 	int parametr_value = 120;
 	if (argc >= 2) {
 		std::cout << "We have one more argument = " << argv[1] << std::endl;
-		
 		std::string argv1_value = argv[1];
 		if (argv1_value == "-table") {
 			PrintScoresTable();
@@ -34,7 +32,6 @@ int main(int argc, char* argv[]) {
 			}
 
 			parametr_value = std::stoi(argv[2]);
-
 			if (argv1_value == "-level" && parametr_value == 1) {
 				parametr_value = 10;
 			}
@@ -62,10 +59,10 @@ int main(int argc, char* argv[]) {
 	int current_value = 0;
 	bool not_win = true;
 
+	// Game
 	std::cout << "Enter your guess:" << std::endl;
 	int attempts = 1;
 
-	//game
 	do {
 		std::cin >> current_value;
 		if(std::cin.fail()) {

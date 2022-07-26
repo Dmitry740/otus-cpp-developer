@@ -63,7 +63,6 @@ void PrintScoresTable() {
 }
 
 //Print in file
-
 void PrintInFile(const std::string& user_name, const int& attempts) {
 	const std::string high_scores_filename = "high_scores.txt";
 	std::ifstream in_file(high_scores_filename);
@@ -82,7 +81,8 @@ void PrintInFile(const std::string& user_name, const int& attempts) {
 			if (high_score < table.at(name)) {
 				table[name] = high_score;
 			}
-		} else {
+		} 
+		else {
 			table[name] = high_score;
 		}	
 	
