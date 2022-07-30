@@ -30,7 +30,7 @@ void PrintScoresTable() {
 	std::map<std::string, int> table;
 		
 	while (true) {
-		in_file >> user_name;
+		std::getline(in_file, user_name, '-');
 		in_file >> high_score;
 		if (!table.empty() && table.count(user_name) == 1) {
 			if (high_score < table.at(user_name)) {
@@ -51,9 +51,9 @@ void PrintScoresTable() {
 	std::cout << "High scores table:" << std::endl;
 
 	int pos = 1;
-	for (int i = 0; i < table.size(); ++i) {
+	for (int i = 0; i < 2000; ++i) {
 		for (const auto n : table) {
-			if (n.second == pos) {
+			if (n.second == pos && !n.first.empty()) {
 			std::cout << n.first << '\t' << '\t'<< n.second << std::endl;
 			}
 		}
@@ -64,6 +64,10 @@ void PrintScoresTable() {
 
 //Print in file
 void PrintInFile(const std::string& user_name, const int& attempts) {
+	std::ofstream out_file;
+	out_file.open("high_scores.txt", std::ios_base::app);
+	out_file.close();
+
 	const std::string high_scores_filename = "high_scores.txt";
 	std::ifstream in_file(high_scores_filename);
 	if (!in_file.is_open()) {
@@ -75,7 +79,7 @@ void PrintInFile(const std::string& user_name, const int& attempts) {
 	std::map<std::string, int> table;
 	
 	while (true) {
-		in_file >> name;
+		std::getline(in_file, name, '-');
 		in_file >> high_score;
 		if (!table.empty() && table.count(name) == 1) {
 			if (high_score < table.at(name)) {
@@ -103,7 +107,7 @@ void PrintInFile(const std::string& user_name, const int& attempts) {
 			return;
 		}
 	for (const auto n : table) {
-		out_file << n.first << ' ';
+		out_file << n.first << '-';
 		out_file << n.second;
 		out_file << std::endl;
 	}
@@ -111,12 +115,13 @@ void PrintInFile(const std::string& user_name, const int& attempts) {
 
 	}
 	else {
-		std::ofstream out_file(high_scores_filename, std::ios_base::app);
+		std::ofstream out_file;
+		out_file.open("high_scores.txt", std::ios_base::app);
 		if (!out_file.is_open()) {
 			std::cout << "Faild to open file " << high_scores_filename << "!" << std::endl;
 			return;
 		}
-		out_file << user_name << ' ';
+		out_file << user_name << '-';
 		out_file << attempts;
 		out_file << std::endl;
 

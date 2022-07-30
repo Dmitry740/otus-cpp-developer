@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
 	// Ask about name and start the game
 	std::cout << "Hi! Enter your name, please:" << std::endl;
 	std::string user_name;
-	std::cin >> user_name;
+	std::getline(std::cin, user_name);
 	std::cout << "GO!!" << std::endl;
 
 	const int target_value = GeneretorNumber(parametr_value);
