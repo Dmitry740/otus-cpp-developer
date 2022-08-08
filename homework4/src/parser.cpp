@@ -38,6 +38,7 @@ ASTNode *Parser::expr() {
             return root;
         }
     }
+
 }
 
 ASTNode *Parser::term() {
@@ -63,8 +64,9 @@ ASTNode *Parser::term() {
         }
         default:
             return root;
-        }
-    }
+        } 
+        delete root;
+    }        
 }
 
 ASTNode *Parser::prim() {
