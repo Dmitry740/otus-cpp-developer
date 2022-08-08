@@ -13,6 +13,7 @@ class Variable : public ASTNode {
     }
 
     Variable(const Variable& other) = delete;
+    Variable& operator=(const Variable& other) = delete;
     ~Variable();
 
   private:

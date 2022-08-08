@@ -13,6 +13,7 @@ class Number : public ASTNode {
     }
 
     Number(const Number& other) = delete;
+    Number& operator=(const Number& other) = delete;
     ~Number();
 
   private:
