@@ -11,11 +11,6 @@ class Variable : public ASTNode {
     std::string num() const { 
       return name_; 
     }
-
-    Variable(const Variable& other) = delete;
-    Variable& operator=(const Variable& other) = delete;
-    ~Variable();
-
   private:
     std::string name_;
 };

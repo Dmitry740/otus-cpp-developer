@@ -11,11 +11,6 @@ class Number : public ASTNode {
     int value() const { 
       return val_; 
     }
-
-    Number(const Number& other) = delete;
-    Number& operator=(const Number& other) = delete;
-    ~Number();
-
   private:
     int val_;
 };

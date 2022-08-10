@@ -15,6 +15,10 @@ class Parser {
     Parser &operator=(const Parser &other) = delete;
 
     ~Parser() = default;
+    // ~Parser() {
+    //   delete Parser::term();
+    //   delete Parser::prim();
+    // }
 
     ASTNode *parse();
 
