@@ -91,22 +91,22 @@ public:
 	void update(double next) override {
 		m_range.push_back(next);
 	}
-
-	double calc(std::vector<double> m_range) {
-		for(size_t i = 0; i < m_range.size(); ++i) {
-			m_sum += m_range[i];
+	
+	double calc(std::vector<double> range) {
+		for(double i : range) {
+			m_sum += i;
 		}
 		
-		m_mean = m_sum / m_range.size();
+		m_mean = m_sum / range.size();
 
-		for(size_t i = 0; i < m_range.size(); ++i) {
-			m_sumn += (m_range[i] - m_mean) * (m_range[i] - m_mean);
+		for(double i : m_range) {
+			m_sumn += (i - m_mean) * (i - m_mean);
 		}
 
-		m_sigm = m_sumn / (m_range.size() - 1);
-		m_std = sqrt(m_sigm);
+		m_std = sqrt(m_sumn / (range.size() - 1));
+		return m_std;
 	}
-
+	
 	double eval() const override {
 		return m_std;
 	}
@@ -116,12 +116,11 @@ public:
 	}
 
 private:
-	long double m_std;
+	double m_std;
 	double m_mean;
 	double m_sum;
 	double m_sumn;
 	double m_count;
-	double m_sigm;
 	std::vector<double> m_range;
 };
 
@@ -145,7 +144,7 @@ public:
 
 private:
 	double m_pct90;
-	int m_count;
+	double m_count;
 	std::vector<double> m_range;
 };
 
@@ -170,7 +169,7 @@ public:
 
 private:
 	double m_pct95;
-	int m_count;
+	double m_count;
 	std::vector<double> m_range;
 };
 
@@ -198,7 +197,7 @@ int main() {
 		std::cerr << "Invalid input data\n";
 		return 1;
 	}
-
+	
 	// Print results if any
 	for (size_t i = 0; i < statistics_count; ++i) {
 		std::cout << statistics[i]->name() << " = " << statistics[i]->eval() << std::endl;
