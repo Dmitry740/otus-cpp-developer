@@ -2,6 +2,7 @@
 #include <limits>
 #include <vector>
 #include <cmath>
+#include <numeric>
 
 class IStatistics {
 public:
@@ -60,17 +61,21 @@ private:
 
 class Mean : public IStatistics {
 public:
-	Mean() : m_mean{.0}, m_sum{.0}, m_count{0.} {
+	Mean() : m_range{} {
 	}
 
 	void update(double next) override {
-		m_sum += next;
-		++m_count;
-		m_mean = m_sum / m_count;
+		m_range.push_back(next);
 	}
 				
 	double eval()  const override {
-		return m_mean;
+		// const auto sum = std::accumulate(m_range.begin(), m_range.end(), 0);
+		double sum = 0;
+		for(auto i : m_range) {
+			sum += i;
+		}
+
+		return (sum / m_range.size());
 	}
 
 	const char * name() const override {
@@ -78,64 +83,69 @@ public:
 	}
 
 private:
-	double m_mean;
-	double m_sum;
-	double m_count;
+	std::vector<double> m_range;
 };
 
 class Std : public IStatistics {
 public:
-	Std() : m_std{.0}, m_mean{m_mean}, m_sum{.0}, m_count{0.} {
+	Std() : m_range{} {
 	}
 	
 	void update(double next) override {
 		m_range.push_back(next);
 	}
-	
-	double calc(std::vector<double> range) {
-		for(double i : range) {
-			m_sum += i;
+
+	double eval() const override {
+		// const auto sum = std::accumulate(m_range.begin(), m_range.end(), 0);
+
+		double sum = 0;
+		for(const auto i : m_range) {
+			sum += i;
 		}
+			
+		const auto mean = sum / m_range.size();
+
+		std::vector<double> newrange;
 		
-		m_mean = m_sum / range.size();
+		// newrange.reserve(m_range.size());
 
 		for(double i : m_range) {
-			m_sumn += (i - m_mean) * (i - m_mean);
+			const auto sumn = (i - mean) * (i - mean);
+			newrange.push_back(sumn);
 		}
 
-		m_std = sqrt(m_sumn / (range.size() - 1));
-		return m_std;
-	}
-	
-	double eval() const override {
-		return m_std;
-	}
+		// const auto sumstd = std::accumulate(newrange.begin(), newrange.end(), 0);
+
+		double sumstd = 0;
+		for(const auto i : m_range) {
+			sumstd += i;
+		}
+			
+		const auto newmean = sumstd / newrange.size();
+
+		return sqrt(newmean);
+		}
 
 	const char * name() const override {
 		return "std";
 	}
 
 private:
-	double m_std;
-	double m_mean;
-	double m_sum;
-	double m_sumn;
-	double m_count;
 	std::vector<double> m_range;
 };
 
 class Pct90 : public IStatistics {
 public:
-	Pct90() : m_pct90{.0}, m_count{0}, m_range{} {}
+	Pct90() : m_range{} {}
 
 	void update (double next) override {
 		m_range.push_back(next);
-		m_count = 0.9 * m_range.size();
-		m_pct90 = m_range[m_count];
 	}
 
 	double eval() const override {
-		return m_pct90;
+		const auto rangecount = (0.9 * m_range.size());
+	
+		return m_range[rangecount];
 	}
 
 	const char * name() const override {
@@ -143,24 +153,21 @@ public:
 	}
 
 private:
-	double m_pct90;
-	double m_count;
 	std::vector<double> m_range;
 };
 
 class Pct95 : public IStatistics {
 public:
-	Pct95() : m_pct95{.0}, m_count{0}, m_range{} {}
+	Pct95() : m_range{} {}
 
 	void update (double next) override {
 		m_range.push_back(next);
-
-		m_count = 0.95 * m_range.size();
-		m_pct95 = m_range[m_count];
 	}
 
 	double eval() const override {
-		return m_pct95;
+		double rangecount = (0.95 * m_range.size());
+	
+		return m_range[rangecount];
 	}
 
 	const char * name() const override {
@@ -168,8 +175,6 @@ public:
 	}
 
 private:
-	double m_pct95;
-	double m_count;
 	std::vector<double> m_range;
 };
 
@@ -191,7 +196,7 @@ int main() {
 			statistics[i]->update(val);
 		}
 	}
-
+	
 	// Handle invalid input data
 	if (!std::cin.eof() && !std::cin.good()) {
 		std::cerr << "Invalid input data\n";
