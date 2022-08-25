@@ -69,11 +69,11 @@ public:
 	}
 				
 	double eval()  const override {
-		// const auto sum = std::accumulate(m_range.begin(), m_range.end(), 0);
-		double sum = 0;
-		for(auto i : m_range) {
-			sum += i;
-		}
+		const auto sum = std::accumulate(m_range.begin(), m_range.end(), .0);
+		// double sum = 0;
+		// for(auto i : m_range) {
+		// 	sum += i;
+		// }
 
 		return (sum / m_range.size());
 	}
@@ -96,30 +96,30 @@ public:
 	}
 
 	double eval() const override {
-		// const auto sum = std::accumulate(m_range.begin(), m_range.end(), 0);
+		const auto sum = std::accumulate(m_range.begin(), m_range.end(), .0);
 
-		double sum = 0;
-		for(const auto i : m_range) {
-			sum += i;
-		}
+		// double sum = 0;
+		// for(const auto i : m_range) {
+		// 	sum += i;
+		// }
 			
 		const auto mean = sum / m_range.size();
 
 		std::vector<double> newrange;
 		
-		// newrange.reserve(m_range.size());
+		newrange.reserve(m_range.size());
 
 		for(double i : m_range) {
 			const auto sumn = (i - mean) * (i - mean);
 			newrange.push_back(sumn);
 		}
 
-		// const auto sumstd = std::accumulate(newrange.begin(), newrange.end(), 0);
+		const auto sumstd = std::accumulate(newrange.begin(), newrange.end(), .0);
 
-		double sumstd = 0;
-		for(const auto i : m_range) {
-			sumstd += i;
-		}
+		// double sumstd = 0;
+		// for(const auto i : m_range) {
+		// 	sumstd += i;
+		// }
 			
 		const auto newmean = sumstd / newrange.size();
 
@@ -143,7 +143,7 @@ public:
 	}
 
 	double eval() const override {
-		const auto rangecount = (0.9 * m_range.size());
+		const auto rangecount = static_cast<size_t>(0.9 * m_range.size());
 	
 		return m_range[rangecount];
 	}
@@ -165,7 +165,7 @@ public:
 	}
 
 	double eval() const override {
-		double rangecount = (0.95 * m_range.size());
+		const auto rangecount = static_cast<size_t>(0.95 * m_range.size());
 	
 		return m_range[rangecount];
 	}
