@@ -256,4 +256,8 @@ void test_container() {
   print_container(int_container);
 }
 
-int main() { test_container(); }
+int main() {
+  test_container();
+
+  return 0;
+}
