@@ -10,8 +10,8 @@ class ListContainer {
  public:
   ListContainer() : m_size{0}, m_first{nullptr}, m_last{nullptr} {}
 
-  ListContainer(const ListContainer& oter)
-      : ListContainer{other.m_first(), other.m_last()} {
+  ListContainer(const ListContainer& other)
+      : ListContainer{other.m_first()}, ListContainer{other.m_last()} {
     std::cout << "ListContainer(const ListContainer&)" << std::endl;
   }
 
@@ -129,31 +129,43 @@ class ListContainer {
     return true;
   }
 
-  // struct Iterator {
-  //   T& operator*() const {
-  //     for (Node* elem = m_first; elem != m_last->next; elem = elem->next) {
-  //       return elem->data;
-  //     }
-  //   }
+  bool empty() {
+    if (m_size == 0) {
+      std::cout << "Error: container is empty" << std::endl;
+      return true;
+    } else {
+      return false;
+    }
+  }
 
-  //   Iterator& operator++() { return *this; }
-  //   Iterator& operator++(int) {
-  //     Iterator it(*this);
-  //     ++*this;
+  struct Iterator {
+    Iterator(Node* one) : m_one{one} {}
 
-  //     return it;
-  //   }
+    T& operator*() const { return m_one->data; }
+    T& get() const { return m_one->data; }
 
-  //   bool operator==(const Iterator& it) const {
-  //     if (m_last == it.m_last) return true;
-  //   }
+    Iterator& operator++() {
+      m_one = m_one->next;
+      return *this;
+    }
 
-  //   bool operator!=(const Iterator& it) const { return !(it == *this); }
-  // };
+    Iterator& operator++(int) {
+      Iterator it(*this);
+      (*this) = m_one->next;
+      return *this;
+    }
 
-  // Iterator begin() { return m_first->data; }
+    bool operator==(const Iterator& it) const { return m_one == it.m_one; }
 
-  // Iterator end() { return m_last->data; }
+    bool operator!=(const Iterator& it) const { return !(*this == it); }
+
+   private:
+    Node* m_one;
+  };
+
+  Iterator begin() { return m_first; }
+
+  Iterator end() { return {nullptr}; }
 
   const T operator[](size_t index) const {
     size_t i = 0;
@@ -189,6 +201,15 @@ void print_container(ListContainer<T>& container) {
 void test_container() {
   ListContainer<int> int_container;
 
+  if (!int_container.empty()) {
+    for (auto iter = int_container.begin(); iter != int_container.end();
+         ++iter) {
+      std::cout << iter.get() << ' ';
+    }
+  }
+
+  std::cout << std::endl;
+
   int_container.push_back(0);
   int_container.push_back(1);
   int_container.push_back(2);
@@ -200,10 +221,12 @@ void test_container() {
   int_container.push_back(8);
   int_container.push_back(9);
 
-  // for (auto iter = int_container.begin(); iter != int_container.end();
-  // ++iter) {
-  //   std::cout << *iter << std::endl;
-  // }
+  std::cout << "Elements from iterator: ";
+  for (auto iter = int_container.begin(); iter != int_container.end(); ++iter) {
+    std::cout << iter.get() << ' ';
+  }
+
+  std::cout << std::endl;
 
   print_container(int_container);
 
@@ -222,6 +245,13 @@ void test_container() {
   print_container(int_container);
 
   int_container.push_back(30);
+
+  std::cout << "Elements from iterator: ";
+  for (auto iter = int_container.begin(); iter != int_container.end(); iter++) {
+    std::cout << *iter << ' ';
+  }
+
+  std::cout << std::endl;
 
   print_container(int_container);
 }

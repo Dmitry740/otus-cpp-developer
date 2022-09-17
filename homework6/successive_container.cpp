@@ -7,7 +7,7 @@ class SuccessiveContainer {
 
   SuccessiveContainer(const SuccessiveContainer& other)
       : SuccessiveContainer{other.m_region()} {
-    std::cout << "SuccessiveContainer(const SuccessiveContainer&" << std::endl;
+    std::cout << "SuccessiveContainer const SuccessiveContainer&" << std::endl;
   }
 
   SuccessiveContainer(SuccessiveContainer&& other) {
@@ -28,6 +28,7 @@ class SuccessiveContainer {
   SuccessiveContainer& operator=(const SuccessiveContainer& rhs) {
     std::cout << "SuccessiveContainer::operator=" << std::endl;
     SuccessiveContainer temp{rhs};
+
     T* data = m_region;
     m_region = temp.m_region;
     temp.m_region = data;
@@ -55,7 +56,7 @@ class SuccessiveContainer {
       ++m_size;
     } else {
       T* new_region = new T[((m_size + 1) * 2)];
-      m_cap = ((m_size + 1) * 2);
+      m_cap = std::move(((m_size + 1) * 2));
 
       for (size_t i = 0; i < m_size; ++i) {
         new_region[i] = m_region[i];
@@ -79,7 +80,7 @@ class SuccessiveContainer {
       ++m_size;
     } else {
       T* new_region = new T[((m_size + 1) * 2)];
-      m_cap = ((m_size + 1) * 2);
+      m_cap = std::move(((m_size + 1) * 2));
 
       for (size_t i = 0; i < pos; ++i) {
         new_region[i] = m_region[i];
@@ -114,38 +115,45 @@ class SuccessiveContainer {
   bool empty() {
     if (m_size == 0) {
       std::cout << "Error: no elements in container" << std::endl << std::endl;
-      return false;
-    } else {
       return true;
+    } else {
+      return false;
     }
   }
 
-  // struct Iterator {
-  //   int index;
-  //   T& get() { return m_region[index]; }
-  //   T& operator*() const { return m_region[index]; }
-  //   Iterator& operator++() { return *this; }
-  //   Iterator& operator++(int) {
-  //     Iterator it(*this);
-  //     ++*this;
+  struct Iterator {
+    Iterator(const size_t index, SuccessiveContainer& container)
+        : m_index(index), m_cont(&container) {}
 
-  //     return it;
-  //   }
+    explicit Iterator(const size_t size) : m_index(size) {}
 
-  //   bool operator==(const Iterator& it) const {
-  //     if (this == it) {
-  //       return true;
-  //     }
-  //   }
+    T& get() { return (*m_cont)[m_index]; }
+    T& operator*() { return (*m_cont)[m_index]; }
 
-  //   bool operator!=(const Iterator& it) const { return !(this == it); }
-  // };
+    Iterator& operator++() {
+      m_index++;
+      return *this;
+    }
+    Iterator& operator++(int) {
+      Iterator it(*this);
+      ++(*this);
+      return *this;
+    }
 
-  // Iterator begin() { return Iterator(index = 0); }
+    bool operator==(const Iterator& it) const { return m_index == it.m_index; }
 
-  // Iterator end() { return Iterator(m_size + 1); }
+    bool operator!=(const Iterator& it) const { return !(*this == it); }
 
-  T& operator[](int i) { return m_region[i]; }
+   private:
+    size_t m_index = 0;
+    SuccessiveContainer* m_cont = nullptr;
+  };
+
+  Iterator begin() { return Iterator{0, *this}; }
+
+  Iterator end() { return Iterator{m_size}; }
+
+  T& operator[](size_t i) { return m_region[i]; }
 
   size_t size() const { return m_size; }
 
@@ -172,6 +180,15 @@ void print_container(SuccessiveContainer<T>& container) {
 void test_container() {
   SuccessiveContainer<int> int_container;
 
+  if (!int_container.empty()) {
+    std::cout << std::endl << "Elements from iterator: ";
+    for (auto iter = int_container.begin(); iter != int_container.end();
+         ++iter) {
+      std::cout << iter.get() << ' ';
+    }
+    std::cout << std::endl;
+  }
+
   int_container.push_back(0);
   int_container.push_back(1);
   int_container.push_back(2);
@@ -183,10 +200,11 @@ void test_container() {
   int_container.push_back(8);
   int_container.push_back(9);
 
-  // for (auto iter = int_container.begin(); iter != int_container.end();
-  // ++iter) {
-  //   std::cout << *iter << std::endl;
-  // }
+  std::cout << std::endl << "Elements from iterator: ";
+  for (auto iter = int_container.begin(); iter != int_container.end(); iter++) {
+    std::cout << iter.get() << ' ';
+  }
+  std::cout << std::endl;
 
   print_container(int_container);
 
@@ -205,6 +223,14 @@ void test_container() {
   print_container(int_container);
 
   int_container.push_back(30);
+
+  std::cout << std::endl << "Elements from iterator: ";
+
+  for (auto iter = int_container.begin(); iter != int_container.end(); ++iter) {
+    std::cout << *iter << ' ';
+  }
+
+  std::cout << std::endl;
 
   print_container(int_container);
 }
