@@ -11,3 +11,18 @@ if(MSVC)
 else()
     target_compile_options(hello PUBLIC -Wall -Wextra -Werror -pedantic)
 endif()
+
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR
+CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+target_compile_options(statistics PRIVATE
+-g
+-Wall
+-Wextra
+-Werror
+-pedantic)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+target_compile_options(statistics PRIVATE
+/EHsc
+/W4
+/WX)
+endif()
