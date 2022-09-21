@@ -12,14 +12,14 @@ else()
 endif()
 
 add_executable(
-	successive_container
-	successive_container.cpp
+	main_successive
+	successive_container/main_successive.cpp
 )
 add_executable(
-	list_container
-	list_container.cpp
+	main_list
+	list_container/main_list.cpp
 )
 add_executable(
-	list_container_one_root
-	list_container_one_root.cpp
+	main_list_one_root
+	list_container_one_root/main_list_one_root.cpp
 )
