@@ -46,7 +46,17 @@ class ListContainerOR {
     m_size = 0;
   }
 
-  ~ListContainerOR() { std::cout << "~ListContainerOR" << std::endl; }
+  ~ListContainerOR() {
+    size_t count = 0;
+    if (m_first == nullptr) {
+      std::cout << "There are not objects to delete" << std::endl;
+    }
+    if (m_first != nullptr)
+      while (pop_back()) {
+        ++count;
+        std::cout << "~ListContainer " << count << std::endl;
+      }
+  }
 
   ListContainerOR& operator=(const ListContainerOR& rhs) {
     std::cout << "ListContainerOR::operator=" << std::endl;
@@ -124,7 +134,7 @@ class ListContainerOR {
     }
     Node* first = m_first;
     if (m_size == 1) {
-      delete[] m_first;
+      delete m_first;
     } else {
       size_t i = 1;
       while (i != m_size - 1) {
@@ -134,7 +144,7 @@ class ListContainerOR {
       m_last = first->next;
       first = m_last->next;
 
-      delete[] first;
+      delete first;
     }
     --m_size;
     return true;
@@ -149,7 +159,7 @@ class ListContainerOR {
     if (pos == 0 && m_size > 1) {
       Node* next = first->next;
       m_first = std::move(next);
-      delete[] first;
+      delete first;
 
       --m_size;
       return true;
@@ -166,7 +176,7 @@ class ListContainerOR {
       first = temp->next;
       prev->next = first;
 
-      delete[] temp;
+      delete temp;
 
       --m_size;
       return true;
@@ -182,14 +192,14 @@ class ListContainerOR {
       first = m_last->next;
       m_last->next = nullptr;
 
-      delete[] first;
+      delete first;
 
       --m_size;
       return true;
     }
 
     if (m_size == 1) {
-      delete[] m_first;
+      delete m_first;
 
       --m_size;
     }

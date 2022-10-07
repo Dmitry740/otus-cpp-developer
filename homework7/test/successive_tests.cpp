@@ -95,3 +95,9 @@ TEST_F(SucsTest, ContainerMove) {
   ASSERT_EQ(vect.size(), 0);
   ASSERT_TRUE(vect.empty());
 }
+
+TEST_F(SucsTest, Iterator) {
+  vect[5] = 555;
+
+  ASSERT_EQ(vect[5], 555);
+}

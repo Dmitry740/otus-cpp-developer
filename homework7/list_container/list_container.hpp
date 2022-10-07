@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 
 template <typename T>
 class ListContainer {
@@ -46,13 +47,17 @@ class ListContainer {
     other.m_size = 0;
   }
 
-  ~ListContainer() { std::cout << "~ListContainer" << std::endl; }
-
-  // ~ListContainer() {
-  //   delete[] m_first;
-  //   delete[] m_last;
-  //   std::cout << "~ListContainer" << std::endl;
-  // }
+  ~ListContainer() {
+    size_t count = 0;
+    if (m_first == nullptr) {
+      std::cout << "There are not objects to delete" << std::endl;
+    }
+    if (m_first != nullptr)
+      while (pop_back()) {
+        ++count;
+        std::cout << "~ListContainer " << count << std::endl;
+      }
+  }
 
   ListContainer& operator=(const ListContainer& rhs) {
     std::cout << "ListContainer::operator=" << std::endl;
@@ -140,14 +145,14 @@ class ListContainer {
       m_last = last->prev;
       m_last->next = nullptr;
 
-      delete[] last;
+      delete last;
 
       --m_size;
       return true;
     }
 
     if (m_size == 1) {
-      delete[] m_last;
+      delete m_last;
 
       --m_size;
     }
@@ -164,7 +169,7 @@ class ListContainer {
       next->prev = nullptr;
       m_first = std::move(next);
 
-      delete[] first;
+      delete first;
 
       --m_size;
       return true;
@@ -180,7 +185,7 @@ class ListContainer {
       prev->next = next;
       next->prev = std::move(prev);
 
-      delete[] first;
+      delete first;
 
       --m_size;
       return true;
@@ -191,13 +196,13 @@ class ListContainer {
       m_last = last->prev;
       m_last->next = nullptr;
 
-      delete[] last;
+      delete last;
       --m_size;
       return true;
     }
 
     if (m_size == 1) {
-      delete[] first;
+      delete first;
 
       --m_size;
     }

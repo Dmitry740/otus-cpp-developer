@@ -6,8 +6,8 @@ class SuccessiveContainer {
   SuccessiveContainer() = default;
 
   SuccessiveContainer(const SuccessiveContainer& other) {
-    for (auto temp = 0; temp < other.m_size; ++temp) {
-      push_back(other[temp]);
+    for (auto temp : other) {
+      push_back(temp);
     }
     std::cout << "SuccessiveContainer const SuccessiveContainer&" << std::endl;
   }
@@ -164,28 +164,58 @@ class SuccessiveContainer {
     }
   }
 
-  struct Iterator {
-    Iterator(const size_t index, SuccessiveContainer& container)
+  struct ConstIterator {
+    ConstIterator(const size_t index, const SuccessiveContainer& container)
         : m_index(index), m_cont(&container) {}
 
-    explicit Iterator(const size_t size) : m_index(size) {}
+    explicit ConstIterator(const size_t size) : m_index(size) {}
 
-    T& get() { return (*m_cont)[m_index]; }
-    T& operator*() { return (*m_cont)[m_index]; }
+    const T& get() const { return (*m_cont)[m_index]; }
+    const T& operator*() const { return (*m_cont)[m_index]; }
 
-    Iterator& operator++() {
+    ConstIterator& operator++() {
       m_index++;
       return *this;
     }
-    Iterator& operator++(int) {
+    ConstIterator& operator++(int) {
       Iterator it(*this);
       ++(*this);
       return *this;
     }
 
-    bool operator==(const Iterator& it) const { return m_index == it.m_index; }
+    bool operator==(const ConstIterator& it) const {
+      return m_index == it.m_index;
+    }
 
-    bool operator!=(const Iterator& it) const { return !(*this == it); }
+    bool operator!=(const ConstIterator& it) const { return !(*this == it); }
+
+   private:
+    size_t m_index = 0;
+    const SuccessiveContainer* m_cont = nullptr;
+  };
+
+  struct Iterator : ConstIterator {
+    // Iterator(const size_t index, SuccessiveContainer& container)
+    //     : m_index(index), m_cont(&container) {}
+
+    // explicit Iterator(const size_t size) : m_index(size) {}
+
+    T& get() { return (*m_cont)[m_index]; }
+    T& operator*() { return (*m_cont)[m_index]; }
+
+    // Iterator& operator++() {
+    //   m_index++;
+    //   return *this;
+    // }
+    // Iterator& operator++(int) {
+    //   Iterator it(*this);
+    //   ++(*this);
+    //   return *this;
+    // }
+
+    bool operator==(const Iterator& it) { return m_index == it.m_index; }
+
+    bool operator!=(const Iterator& it) { return !(*this == it); }
 
    private:
     size_t m_index = 0;
@@ -194,11 +224,11 @@ class SuccessiveContainer {
 
   Iterator begin() { return Iterator{0, *this}; }
 
-  Iterator begin() const { return Iterator{0, *this}; }
-
   Iterator end() { return Iterator{m_size}; }
 
-  Iterator end() const { return Iterator{m_size}; }
+  ConstIterator begin() const { return ConstIterator{0, *this}; }
+
+  ConstIterator end() const { return ConstIterator{m_size}; }
 
   T& operator[](size_t i) { return m_region[i]; }
 
