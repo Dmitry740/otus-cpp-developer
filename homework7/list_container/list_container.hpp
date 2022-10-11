@@ -16,7 +16,6 @@ class ListContainer {
     for (const auto& temp : other) {
       push_back(temp);
     }
-    std::cout << "ListContainer(const ListContainer&)" << std::endl;
   }
 
   bool operator==(const ListContainer& rhs) const {
@@ -48,20 +47,16 @@ class ListContainer {
   }
 
   ~ListContainer() {
-    size_t count = 0;
     if (m_first == nullptr) {
       std::cout << "There are not objects to delete" << std::endl;
     }
-    if (m_first != nullptr)
+    if (m_first != nullptr) {
       while (pop_back()) {
-        ++count;
-        std::cout << "~ListContainer " << count << std::endl;
       }
+    }
   }
 
   ListContainer& operator=(const ListContainer& rhs) {
-    std::cout << "ListContainer::operator=" << std::endl;
-
     ListContainer temp{rhs};
 
     *this = std::move(temp);
@@ -70,7 +65,6 @@ class ListContainer {
   }
 
   ListContainer& operator=(ListContainer&& rhs) noexcept {
-    std::cout << "&&ListContainer::operator=" << std::endl;
     if (this == &rhs) {
       return *this;
     }
@@ -110,7 +104,7 @@ class ListContainer {
     if (pos == 0) {
       Node* new_node = new Node{};
       new_node->prev = nullptr;
-      new_node->next = std::move(first);
+      new_node->next = first;
       new_node->data = std::move(value);
       first->prev = new_node;
       m_first = std::move(new_node);

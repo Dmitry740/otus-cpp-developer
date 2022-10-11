@@ -14,8 +14,6 @@ class ListContainerOR {
     for (const auto& temp : other) {
       push_back(temp);
     }
-
-    std::cout << "ListContainerOR(const ListContainerOR&)" << std::endl;
   }
 
   bool operator==(const ListContainerOR& rhs) const {
@@ -47,20 +45,16 @@ class ListContainerOR {
   }
 
   ~ListContainerOR() {
-    size_t count = 0;
     if (m_first == nullptr) {
       std::cout << "There are not objects to delete" << std::endl;
     }
-    if (m_first != nullptr)
+    if (m_first != nullptr) {
       while (pop_back()) {
-        ++count;
-        std::cout << "~ListContainer " << count << std::endl;
       }
+    }
   }
 
   ListContainerOR& operator=(const ListContainerOR& rhs) {
-    std::cout << "ListContainerOR::operator=" << std::endl;
-
     ListContainerOR temp{rhs};
     *this = std::move(temp);
 
@@ -68,7 +62,6 @@ class ListContainerOR {
   }
 
   ListContainerOR& operator=(ListContainerOR&& rhs) noexcept {
-    std::cout << "&&ListContainerOR::operator=" << std::endl;
     if (this == &rhs) {
       return *this;
     }

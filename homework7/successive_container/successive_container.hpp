@@ -6,10 +6,9 @@ class SuccessiveContainer {
   SuccessiveContainer() = default;
 
   SuccessiveContainer(const SuccessiveContainer& other) {
-    for (auto temp : other) {
+    for (const auto& temp : other) {
       push_back(temp);
     }
-    std::cout << "SuccessiveContainer const SuccessiveContainer&" << std::endl;
   }
 
   bool operator==(const SuccessiveContainer& rhs) const {
@@ -42,13 +41,9 @@ class SuccessiveContainer {
     other.m_region = nullptr;
   }
 
-  ~SuccessiveContainer() {
-    delete[] m_region;
-    std::cout << "~SuccessiveContainer" << std::endl;
-  }
+  ~SuccessiveContainer() { delete[] m_region; }
 
   SuccessiveContainer& operator=(const SuccessiveContainer& rhs) {
-    std::cout << "SuccessiveContainer::operator=" << std::endl;
     SuccessiveContainer temp{rhs};
 
     T* data = m_region;
@@ -67,7 +62,6 @@ class SuccessiveContainer {
   }
 
   SuccessiveContainer& operator=(SuccessiveContainer&& rhs) noexcept {
-    std::cout << "&&SuccessiveContainer::operator=" << std::endl;
     if (this == &rhs) {
       return *this;
     }
