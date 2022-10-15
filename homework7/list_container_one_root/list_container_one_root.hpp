@@ -3,7 +3,7 @@
 template <typename T>
 class ListContainerOR {
   struct Node {
-    Node* next;
+    std::shared_ptr<Node> next;
     T data;
   };
 
@@ -44,15 +44,15 @@ class ListContainerOR {
     m_size = 0;
   }
 
-  ~ListContainerOR() {
-    if (m_first == nullptr) {
-      std::cout << "There are not objects to delete" << std::endl;
-    }
-    if (m_first != nullptr) {
-      while (pop_back()) {
-      }
-    }
-  }
+  // ~ListContainerOR() {
+  //   if (m_first == nullptr) {
+  //     std::cout << "There are not objects to delete" << std::endl;
+  //   }
+  //   if (m_first != nullptr) {
+  //     while (pop_back()) {
+  //     }
+  //   }
+  // }
 
   ListContainerOR& operator=(const ListContainerOR& rhs) {
     ListContainerOR temp{rhs};
@@ -76,9 +76,9 @@ class ListContainerOR {
   }
 
   bool push_back(const T& value) {
-    Node* new_node = new Node{};
+    auto new_node = std::make_shared<Node>();
     new_node->next = nullptr;
-    new_node->data = value;
+    new_node->data = std::move(value);
 
     if (m_size == 0) {
       m_first = new_node;
@@ -95,9 +95,9 @@ class ListContainerOR {
   }
 
   bool insert(size_t pos, const T& value) {
-    Node* first = std::move(m_first);
+    auto first = m_first;
     if (pos == 0) {
-      Node* new_node = new Node{};
+      auto new_node = std::make_shared<Node>();
       new_node->next = first;
       new_node->data = std::move(value);
       m_first = std::move(new_node);
@@ -107,10 +107,10 @@ class ListContainerOR {
         first = first->next;
         ++i;
       }
-      Node* prev = first;
+      auto prev = first;
       first = first->next;
 
-      Node* new_node = new Node{};
+      auto new_node = std::make_shared<Node>();
       new_node->next = first;
       new_node->data = std::move(value);
       prev->next = std::move(new_node);
@@ -125,9 +125,8 @@ class ListContainerOR {
     if (m_size == 0) {
       return false;
     }
-    Node* first = m_first;
+    auto first = m_first;
     if (m_size == 1) {
-      delete m_first;
     } else {
       size_t i = 1;
       while (i != m_size - 1) {
@@ -136,23 +135,20 @@ class ListContainerOR {
       }
       m_last = first->next;
       first = m_last->next;
-
-      delete first;
     }
     --m_size;
     return true;
   }
 
   bool erase(const size_t pos) {
-    Node* first = m_first;
+    auto first = m_first;
     if (pos >= m_size) {
       return false;
     }
 
     if (pos == 0 && m_size > 1) {
-      Node* next = first->next;
+      auto next = first->next;
       m_first = std::move(next);
-      delete first;
 
       --m_size;
       return true;
@@ -164,12 +160,10 @@ class ListContainerOR {
         first = first->next;
         ++i;
       }
-      Node* prev = first;
-      Node* temp = first->next;
+      auto prev = first;
+      auto temp = first->next;
       first = temp->next;
       prev->next = first;
-
-      delete temp;
 
       --m_size;
       return true;
@@ -185,22 +179,18 @@ class ListContainerOR {
       first = m_last->next;
       m_last->next = nullptr;
 
-      delete first;
-
       --m_size;
       return true;
     }
 
     if (m_size == 1) {
-      delete m_first;
-
       --m_size;
     }
     return true;
   }
 
   bool getelements() const {
-    for (Node* elem = m_first; elem != m_last->next; elem = elem->next) {
+    for (auto elem = m_first; elem != m_last->next; elem = elem->next) {
       std::cout << elem->data << ' ';
     }
     return true;
@@ -216,7 +206,7 @@ class ListContainerOR {
   }
 
   struct Iterator {
-    Iterator(Node* one) : m_one{one} {}
+    Iterator(std::shared_ptr<Node> one) : m_one{one} {}
 
     T& operator*() const { return m_one->data; }
     T& get() const { return m_one->data; }
@@ -237,16 +227,16 @@ class ListContainerOR {
     bool operator!=(const Iterator& it) const { return !(*this == it); }
 
    private:
-    Node* m_one;
+    std::shared_ptr<Node> m_one;
   };
 
   Iterator begin() const { return m_first; }
 
   Iterator end() const { return {nullptr}; }
 
-  const T operator[](size_t index) const {
+  const T& operator[](size_t index) const {
     size_t i = 0;
-    Node* first = m_first;
+    auto first = m_first;
     while (i != index) {
       first = first->next;
       ++i;
@@ -258,6 +248,6 @@ class ListContainerOR {
 
  private:
   size_t m_size = 0;
-  Node* m_first = nullptr;
-  Node* m_last = nullptr;
+  std::shared_ptr<Node> m_first = nullptr;
+  std::shared_ptr<Node> m_last = nullptr;
 };
