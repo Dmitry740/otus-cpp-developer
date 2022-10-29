@@ -41,12 +41,12 @@ class SuccessiveContainer {
     other.m_region = nullptr;
   }
 
-  // ~SuccessiveContainer() { delete[] m_region; }
+  ~SuccessiveContainer() { delete[] m_region; }
 
   SuccessiveContainer& operator=(const SuccessiveContainer& rhs) {
     SuccessiveContainer temp{rhs};
 
-    auto data = m_region;
+    T* data = m_region;
     m_region = temp.m_region;
     temp.m_region = data;
 
@@ -81,15 +81,15 @@ class SuccessiveContainer {
       m_region[m_size] = std::move(val);
       ++m_size;
     } else {
+      T* new_region = new T[((m_size + 1) * 2)];
       m_cap = std::move(((m_size + 1) * 2));
-      auto new_region = std::make_shared<T[]>(m_cap);
 
       for (size_t i = 0; i < m_size; ++i) {
         new_region[i] = m_region[i];
       }
 
       new_region[m_size] = std::move(val);
-      // delete[] m_region;
+      delete[] m_region;
       m_region = std::move(new_region);
 
       ++m_size;
@@ -105,8 +105,8 @@ class SuccessiveContainer {
       m_region[pos] = std::move(val);
       ++m_size;
     } else {
+      T* new_region = new T[((m_size + 1) * 2)];
       m_cap = std::move(((m_size + 1) * 2));
-      auto new_region = std::make_shared<T[]>(m_cap);
 
       for (size_t i = 0; i < pos; ++i) {
         new_region[i] = m_region[i];
@@ -118,7 +118,7 @@ class SuccessiveContainer {
 
       new_region[pos] = std::move(val);
 
-      // delete[] m_region;
+      delete[] m_region;
       m_region = std::move(new_region);
       ++m_size;
     }
@@ -235,5 +235,5 @@ class SuccessiveContainer {
  private:
   size_t m_size = 0;
   size_t m_cap = 0;
-  std::shared_ptr<T[]> m_region = nullptr;
+  T* m_region = nullptr;
 };
