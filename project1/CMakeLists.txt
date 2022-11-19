@@ -1,28 +1,76 @@
+# cmake_minimum_required(VERSION 3.10.2)
+# project(reply-keyboard)
+
+# set(CMAKE_CXX_STANDARD 17)
+# set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+# set(Boost_USE_MULTITHREADED ON)
+
+# find_package(Threads REQUIRED)
+# find_package(OpenSSL REQUIRED)
+# find_package(Boost COMPONENTS system REQUIRED)
+# find_package(CURL)
+# include_directories( ${OPENSSL_INCLUDE_DIR} ${Boost_INCLUDE_DIR})
+# if (CURL_FOUND)
+#     include_directories(${CURL_INCLUDE_DIRS})
+#     add_definitions(-DHAVE_CURL)
+# endif()
+
+# add_executable(reply-keyboard main.cpp)
+
+
+
+# target_link_libraries(reply-keyboard PRIVATE C:/src/vcpkg/vcpkg/installed/x64-windows/lib/TgBot.lib ${CMAKE_THREAD_LIBS_INIT} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES} ${CURL_LIBRARIES})
+
+# cmake_minimum_required(VERSION 3.10.2)
+# project(echobot)
+
+# set(CMAKE_CXX_STANDARD 14)
+# set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+# set(Boost_USE_MULTITHREADED ON)
+
+# find_package(Threads REQUIRED)
+# find_package(OpenSSL REQUIRED)
+# find_package(Boost COMPONENTS system REQUIRED)
+# find_package(CURL)
+# include_directories(${OPENSSL_INCLUDE_DIR} ${Boost_INCLUDE_DIR})
+# if (CURL_FOUND)
+# include_directories(${CURL_INCLUDE_DIRS})
+# add_definitions(-DHAVE_CURL)
+# endif()
+
+# add_executable(echobot main.cpp)
+
+# target_link_libraries(echobot PRIVATE C:/src/vcpkg/vcpkg/installed/x64-windows/lib/TgBot.lib ${CMAKE_THREAD_LIBS_INIT} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES} ${CURL_LIBRARIES})
+
 cmake_minimum_required(VERSION 3.10.2)
 
 project(Rent_Car CXX)
 
 add_executable(
-    rent_car
-    rent_car.cpp
-)
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-set(Boost_USE_MULTITHREADED ON)
-
-find_package(Threads REQUIRED)
-find_package(OpenSSL REQUIRED)
-find_package(Boost COMPONENTS system REQUIRED)
-find_package(CURL)
-include_directories(${OPENSSL_INCLUDE_DIR} ${Boost_INCLUDE_DIR})
+        rent_car
+        rent_car.cpp
+    )
+    
+    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+    set(Boost_USE_MULTITHREADED ON)
+    
+    find_package(Threads REQUIRED)
+    find_package(OpenSSL REQUIRED)
+    find_package(Boost COMPONENTS system REQUIRED)
+    find_package(CURL)
+    include_directories(${OPENSSL_INCLUDE_DIR} ${Boost_INCLUDE_DIR})
 if (CURL_FOUND)
 include_directories(${CURL_INCLUDE_DIRS})
 add_definitions(-DHAVE_CURL)
 endif()
 
-target_link_libraries(rent_car PRIVATE C:/src/vcpkg/vcpkg/installed/x64-windows/lib/TgBot.lib ${CMAKE_THREAD_LIBS_INIT} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES} ${CURL_LIBRARIES})
+add_executable(bot main.cpp)
+
+target_link_libraries(bot PRIVATE C:/src/vcpkg/vcpkg/installed/x64-windows/lib/TgBot.lib ${CMAKE_THREAD_LIBS_INIT} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES} ${CURL_LIBRARIES})
 
 find_package(GTest CONFIG REQUIRED)
 target_link_libraries(rent_car PRIVATE GTest::gmock GTest::gtest GTest::gmock_main GTest::gtest_main)
@@ -37,6 +85,6 @@ PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON)
 
 if (MSVC)
     add_compile_options(/W4 /WX)
-else()
+    else()
     add_compile_options(-Wall -Wextra -pedantic -Werror)
 endif()
