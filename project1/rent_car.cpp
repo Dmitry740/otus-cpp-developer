@@ -7,12 +7,10 @@ int main() {
   // RentCar.CreateCarTable();
   // RentCar.InsertCarData();
   // RentCar.CreateClientTable();
-  // RentCar.PrintData();
-  // RentCar.CheckReserve("3");
-  RentCar.UpdateData("1");
-  RentCar.UpdateData("2");
-  RentCar.UpdateData("3");
-  RentCar.UpdateData("4");
-  RentCar.UpdateData("5");
-  // RentCar.CheckReserve("2");
+  // RentCar.PrintCarData();
+  RentCar.RemoveCarReserve("1");
+  RentCar.RemoveCarReserve("2");
+  RentCar.RemoveCarReserve("3");
+  RentCar.RemoveCarReserve("4");
+  RentCar.RemoveCarReserve("5");
 }
