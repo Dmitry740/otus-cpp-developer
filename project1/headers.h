@@ -22,8 +22,26 @@ void createKeyboard(const vector<vector<string>> &buttonLayout,
 
 struct MenuText;
 
-void rent(Bot &bot);
-
-void CompleteCarRent(Bot &bot);
+enum class State;
 
 void startprog(Bot &bot);
+
+void ErrorData(Bot &bot, Message::Ptr message);
+
+void ChangeSC(Bot &bot, Message::Ptr message, State &state);
+
+void InitCase(Bot &bot, Message::Ptr message, State &state);
+
+void W4CarIdCase(Bot &bot, Message::Ptr message, State &state);
+
+void W4LastNameCase(Bot &bot, Message::Ptr message, State &state);
+
+void W4FirstNameCase(Bot &bot, Message::Ptr message, State &state);
+
+void W4LicenseCase(Bot &bot, Message::Ptr message, State &state,
+                   std::string &size);
+void W4PeriodCase(Bot &bot, Message::Ptr message, State &state);
+
+void W4ComplIdCase(Bot &bot, Message::Ptr message, State &state,
+                   std::string &size);
+void W4ComplRentCase(Bot &bot, Message::Ptr message, State &state);

@@ -25,9 +25,10 @@ int callback(void *data, int argc, char **argv, char **ColName) {
 struct Client {
   std::string last_name;
   std::string first_name;
-  std::string lisence;
+  std::string license;
+  std::string car_id;
   std::string rented_car;
-  size_t rent_period = 0;
+  int rent_period = 0;
   int sum = 0;
 };
 
@@ -112,7 +113,7 @@ class DB {
   void PrintCarData() {
     sql = "SELECT *FROM CAR WHERE STATUS = 'Available'";
     rc = sqlite3_exec(db, sql, callback, 0, &ErrMsg);
-    std::cout << qq.str() << std::endl;
+    std::cout << ss.str() << std::endl;
 
     checkDBErr();
   }
@@ -129,6 +130,7 @@ class DB {
     query = "SELECT CAR FROM CAR WHERE ID = " + id;
     sql = query.c_str();
     rc = sqlite3_exec(db, sql, callback, 0, &ErrMsg);
+    std::cout << qq.str() << std::endl;
 
     checkDBErr();
   }
@@ -170,9 +172,9 @@ class DB {
   void CreateClientTable() {
     sql =
         "CREATE TABLE CLIENT (ID INTEGER PRIMARY KEY AUTOINCREMENT, LAST_NAME "
-        "TEXT NOT NULL, FIRST_NAME TEXT NOT NULL, LICENSE TEXT NOT "
-        "NULL, RENTED_CAR TEXT NOT NULL, RENT_PERIOD_DAYS INTEGER, SUM REAL, "
-        "STATUS TEXT NOT NULL)";
+        "TEXT NOT NULL, FIRST_NAME TEXT NOT NULL, LICENSE TEXT NOT NULL, "
+        "RENTED_CAR_ID TEXT NOT NULL, RENTED_CAR_NAME TEXT NOT NULL, "
+        "RENT_PERIOD_DAYS INTEGER, SUM REAL, STATUS TEXT NOT NULL)";
 
     rc = sqlite3_exec(db, sql, callback, 0, &ErrMsg);
 
@@ -180,23 +182,24 @@ class DB {
   }
 
   void InsertClientData(std::string last_name, std::string first_name,
-                        std::string lisence, std::string rented_car,
-                        size_t rent_period, size_t sum) {
+                        std::string license, std::string car_id,
+                        std::string rented_car, int rent_period, int sum) {
     query =
-        "INSERT INTO CLIENT (LAST_NAME, FIRST_NAME, LICENSE_#, RENTED_CAR, "
-        "RENT_PERIOD_DAYS, SUM, STATUS) VALUES( " +
-        last_name + ", " + first_name + ", " + lisence + ", " + rented_car +
-        ", " + std::to_string(rent_period) + ", " + std::to_string(sum) +
-        "'In Rent')";
+        "INSERT INTO CLIENT (LAST_NAME, FIRST_NAME, LICENSE, RENTED_CAR_ID, "
+        "RENTED_CAR_NAME, RENT_PERIOD_DAYS, SUM, STATUS) VALUES( '" +
+        last_name + "', '" + first_name + "', '" + license + "', '" + car_id +
+        "', '" + rented_car + "', '" + std::to_string(rent_period) + "', '" +
+        std::to_string(sum) + "', " + "'In Rent');";
 
     sql = query.c_str();
+    std::cout << sql << std::endl;
     rc = sqlite3_exec(db, sql, callback, 0, &ErrMsg);
 
     checkDBErr();
   }
 
   void PrintClientData(std::string id) {
-    query = "SELECT *FROM CLIENT WHERE ID = " + id;
+    query = "SELECT *FROM CLIENT WHERE LICENSE = " + id;
     sql = query.c_str();
     rc = sqlite3_exec(db, sql, callback, 0, &ErrMsg);
     std::cout << ss.str() << std::endl;
@@ -205,7 +208,16 @@ class DB {
   }
 
   void ClientStatus(std::string id) {
-    query = "UPDATE CLIENT set STATUS ='Rent is completed' where ID = " + id;
+    query =
+        "UPDATE CLIENT set STATUS ='Rent is completed' where LICENSE = " + id;
+    sql = query.c_str();
+    rc = sqlite3_exec(db, sql, callback, 0, &ErrMsg);
+
+    checkDBErr();
+  }
+
+  void ClientGetCarId(std::string id) {
+    query = "SELECT RENTED_CAR_ID FROM CLIENT WHERE LICENSE = " + id;
     sql = query.c_str();
     rc = sqlite3_exec(db, sql, callback, 0, &ErrMsg);
 

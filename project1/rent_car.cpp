@@ -8,7 +8,13 @@ int main() {
   // RentCar.CreateCarTable();
   // RentCar.InsertCarData();
   // RentCar.CreateClientTable();
+  // RentCar.RemoveCarReserve("4");
   // RentCar.PrintCarData();
+  // RentCar.CarName("1");
+  // RentCar.CarName("2");
+  // RentCar.CarName("3");
+  // RentCar.CarName("4");
+  // RentCar.CarName("5");
   RentCar.RemoveCarReserve("1");
   RentCar.RemoveCarReserve("2");
   RentCar.RemoveCarReserve("3");
@@ -18,5 +24,5 @@ int main() {
   // RentCar.CheckCarReserve("4");
   // qq.str("");
   // RentCar.CheckCarReserve("1");
-  // RentCar.PrintClientData("1234567899");
+  // RentCar.PrintClientData("4444444444");
 }
