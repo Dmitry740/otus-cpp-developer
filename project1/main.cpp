@@ -3,7 +3,7 @@
 #include "headers.h"
 
 int main() {
-  Bot bot("5531710570:AAEg9A4VLDWsgbTAkAMSbQv2PuVr5eucJ7U");
+  Bot bot("Place your TOKEN here");
 
   startprog(bot);
 
