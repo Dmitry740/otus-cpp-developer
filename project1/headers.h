@@ -32,6 +32,8 @@ void ChangeSC(Bot &bot, Message::Ptr message, State &state);
 
 void InitCase(Bot &bot, Message::Ptr message, State &state);
 
+void ChooseCarCase(Bot &bot, Message::Ptr message, State &state);
+
 void W4CarIdCase(Bot &bot, Message::Ptr message, State &state);
 
 void W4LastNameCase(Bot &bot, Message::Ptr message, State &state);

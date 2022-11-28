@@ -4,9 +4,6 @@ project(Rent_Car CXX)
 
 add_executable(rent_car rent_car.cpp)
     
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 set(Boost_USE_MULTITHREADED ON)
    
 find_package(Threads REQUIRED)

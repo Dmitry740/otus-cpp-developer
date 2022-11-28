@@ -2,8 +2,8 @@
 
 #include "headers.h"
 
-int main() {
-  Bot bot("Place your TOKEN here");
+int main(int argc, char* argv[]) {
+  Bot bot{argv[1]};
 
   startprog(bot);
 

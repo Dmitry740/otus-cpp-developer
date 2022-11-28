@@ -4,19 +4,16 @@
 #include <iostream>
 #include <sstream>
 
-// using query_result_t = std::map<std::string, std::vector<std::string>>;
 std::stringstream ss;
 std::stringstream qq;
 
 int callback(void *data, int argc, char **argv, char **ColName) {
-  // query_result_t &result = *reinterpret_cast<query_result_t *>(data);
   for (int i = 0; i < argc; ++i) {
     ss << ColName[i];
     ss << ": ";
     ss << argv[i];
     qq << argv[i];
     ss << "\n";
-    // result[ColName[i]].emplace_back(argv[i]);
   }
   ss << "\n";
   return 0;
@@ -42,7 +39,10 @@ class DB {
 
  public:
   DB() {
-    rc = sqlite3_open("RentCarDB.db", &db);
+    rc = sqlite3_open_v2(
+        "RentCarDB.db", &db,
+        SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_FULLMUTEX,
+        NULL);
 
     checkDBErr();
   }
@@ -55,25 +55,6 @@ class DB {
       sqlite3_close(db);
     }
   }
-
-  // void PrintCarData() {
-  // query_result_t result;
-  // sql = "SELECT *FROM CAR WHERE STATUS = 'Available'";
-  // rc = sqlite3_exec(db, sql, callback, &result, &ErrMsg);
-
-  // size_t nrows = 0;
-  // for (const auto &col : result) {
-  //   std::cout << col.first << "\t|";
-  //   nrows = col.second.size();
-  // }
-
-  // for (size_t row = 0; row < nrows; ++row) {
-  //   for (const auto &col : result) {
-  //     std::cout << col.second[row] << "\t|";
-  //   }
-  // }
-  // std::cout << std::endl;
-  // }
 
   // Car Methods
   void CreateCarTable() {
@@ -168,6 +149,13 @@ class DB {
     checkDBErr();
   }
 
+  void DelAllCarRows() {
+    sql = "DELETE FROM CAR";
+    rc = sqlite3_exec(db, sql, callback, 0, &ErrMsg);
+
+    checkDBErr();
+  }
+
   // Client Methods
   void CreateClientTable() {
     sql =
@@ -207,6 +195,14 @@ class DB {
     checkDBErr();
   }
 
+  void PrintAllClient() {
+    sql = "SELECT *FROM CLIENT";
+    rc = sqlite3_exec(db, sql, callback, 0, &ErrMsg);
+    std::cout << ss.str() << std::endl;
+
+    checkDBErr();
+  }
+
   void ClientStatus(std::string id) {
     query =
         "UPDATE CLIENT set STATUS ='Rent is completed' where LICENSE = " + id;
@@ -224,9 +220,24 @@ class DB {
     checkDBErr();
   }
 
+  void ClientGetLicenese(std::string id) {
+    query = "SELECT LICENSE FROM CLIENT WHERE LICENSE = " + id;
+    sql = query.c_str();
+    rc = sqlite3_exec(db, sql, callback, 0, &ErrMsg);
+
+    checkDBErr();
+  }
+
   void DeleteClientRow(std::string id) {
     query = "DELETE FROM CLIENT WHERE ID = " + id;
     sql = query.c_str();
+    rc = sqlite3_exec(db, sql, callback, 0, &ErrMsg);
+
+    checkDBErr();
+  }
+
+  void DelAllClientRows() {
+    sql = "DELETE FROM CLIENT";
     rc = sqlite3_exec(db, sql, callback, 0, &ErrMsg);
 
     checkDBErr();
