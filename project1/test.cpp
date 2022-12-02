@@ -1,10 +1,11 @@
 #include <gtest/gtest.h>
 #pragma comment(lib, "C:/src/vcpkg/vcpkg/installed/x64-windows/lib/sqlite3.lib")
 
-#include "db.h"
+#include "headers.h"
 
 TEST(DB, car_check_reserve) {
   DB TestDB;
+  extern stringstream qq;
 
   TestDB.CheckCarReserve("2");
 
@@ -13,6 +14,7 @@ TEST(DB, car_check_reserve) {
 
 TEST(DB, car_reserve) {
   DB TestDB;
+  extern stringstream qq;
   qq.str("");
 
   TestDB.SetCarReserve("3");
@@ -23,6 +25,7 @@ TEST(DB, car_reserve) {
 
 TEST(DB, car_name) {
   DB TestDB;
+  extern stringstream qq;
   qq.str("");
 
   TestDB.CarName("1");
@@ -32,6 +35,7 @@ TEST(DB, car_name) {
 
 TEST(DB, car_price) {
   DB TestDB;
+  extern stringstream qq;
   qq.str("");
 
   TestDB.CarPrice("5");
@@ -41,6 +45,7 @@ TEST(DB, car_price) {
 
 TEST(DB, car_remove_reserve) {
   DB TestDB;
+  extern stringstream qq;
   qq.str("");
 
   TestDB.CheckCarReserve("3");
@@ -55,6 +60,7 @@ TEST(DB, car_remove_reserve) {
 
 TEST(DB, client_license) {
   DB TestDB;
+  extern stringstream qq;
   qq.str("");
 
   TestDB.ClientGetLicenese("1234567899");

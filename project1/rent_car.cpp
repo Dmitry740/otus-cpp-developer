@@ -1,6 +1,4 @@
-#include <iostream>
-
-#include "db.h"
+#include "headers.h"
 
 // Data Base manual control
 int main() {
@@ -16,14 +14,14 @@ int main() {
   // RentCar.CarName("3");
   // RentCar.CarName("4");
   // RentCar.CarName("5");
-  RentCar.RemoveCarReserve("1");
-  RentCar.RemoveCarReserve("2");
-  RentCar.RemoveCarReserve("3");
-  RentCar.RemoveCarReserve("4");
-  RentCar.RemoveCarReserve("5");
-  // RentCar.PrintCarData();
+  // RentCar.RemoveCarReserve("1");
+  // RentCar.RemoveCarReserve("2");
+  // RentCar.RemoveCarReserve("3");
+  // RentCar.RemoveCarReserve("4");
+  // RentCar.RemoveCarReserve("5");
+  RentCar.PrintCarData();
   // RentCar.DelAllClientRows();
-  // RentCar.PrintAllClient();
+  RentCar.PrintAllClient();
   // qq.str("");
   // RentCar.CheckCarReserve("4");
   // qq.str("");

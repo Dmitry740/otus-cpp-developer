@@ -1,23 +1,7 @@
-#ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x0601
-#endif
+#include "headers.h"
 
-#pragma comment(lib, "C:/src/vcpkg/vcpkg/installed/x64-windows/lib/sqlite3.lib")
-#include <tgbot/tgbot.h>
-
-#include <csignal>
-#include <cstdio>
-#include <cstdlib>
-#include <exception>
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <vector>
-
-#include "db.h"
-
-using namespace std;
-using namespace TgBot;
+extern stringstream ss;
+extern stringstream qq;
 
 void createOneColumnKeyboard(const vector<string> &buttonStrings,
                              ReplyKeyboardMarkup::Ptr &kb) {
@@ -44,16 +28,16 @@ void createKeyboard(const vector<vector<string>> &buttonLayout,
 }
 
 struct MenuText {
-  const std::string AboutCompany = "Simply - WE ARE THE BEST!!!";
-  const std::string conditions =
+  const string AboutCompany = "Simply - WE ARE THE BEST!!!";
+  const string conditions =
       "Give us your pasport, credit card and keys from flat, after that we "
       "give you car:)";
-  const std::string contacts =
+  const string contacts =
       "Adress: Russia, Moscow, red square, 7\n ph.: 777-77-77\n web: "
       "/www.rentcar.ru";
-  const std::string complete =
+  const string complete =
       "For compleating your rent please enter Lisence number";
-  const std::string exit = "Thank you for your visit! Wait you again";
+  const string exit = "Thank you for your visit! Wait you again";
 };
 
 enum class State {
@@ -70,9 +54,9 @@ enum class State {
   RentData
 };
 
-static DB Car;
+DB Car;
 Client client;
-static MenuText menutext;
+MenuText menutext;
 State state;
 
 void ErrorData(Bot &bot, Message::Ptr message) {
@@ -148,8 +132,7 @@ void MyRentCase(Bot &bot, Message::Ptr message, State &state) {
   }
 }
 
-void RentDataCase(Bot &bot, Message::Ptr message, State &state,
-                  std::string &size) {
+void RentDataCase(Bot &bot, Message::Ptr message, State &state, string &size) {
   size = message->text;
   char *p;
   if ((size.size() == 10) & strtol(size.c_str(), &p, 10)) {
@@ -192,7 +175,6 @@ void W4CarIdCase(Bot &bot, Message::Ptr message, State &state) {
       bot.getApi().sendMessage(message->chat->id,
                                "Car under ID " + message->text +
                                    " is reserved, please choose another one");
-      return;
     }
     Car.SetCarReserve(message->text);
     client.car_id = message->text;
@@ -246,8 +228,7 @@ void W4FirstNameCase(Bot &bot, Message::Ptr message, State &state) {
   }
 }
 
-void W4LicenseCase(Bot &bot, Message::Ptr message, State &state,
-                   std::string &size) {
+void W4LicenseCase(Bot &bot, Message::Ptr message, State &state, string &size) {
   if (StringTools::startsWith(message->text, "/start") ||
       StringTools::startsWith(message->text, "/layout") ||
       message->text == "About company" || message->text == "Conditions" ||
@@ -309,8 +290,7 @@ void W4ComplRentCase(Bot &bot, Message::Ptr message, State &state) {
   }
 }
 
-void W4ComplIdCase(Bot &bot, Message::Ptr message, State &state,
-                   std::string &size) {
+void W4ComplIdCase(Bot &bot, Message::Ptr message, State &state, string &size) {
   size = message->text;
   char *p;
   if ((size.size() == 10) & strtol(size.c_str(), &p, 10)) {
@@ -336,7 +316,7 @@ void W4ComplIdCase(Bot &bot, Message::Ptr message, State &state,
   }
 }
 
-volatile std::sig_atomic_t gSignalStatus;
+volatile sig_atomic_t gSignalStatus;
 
 void signal_handler(int signal) { gSignalStatus = signal; }
 
@@ -372,7 +352,7 @@ void startprog(Bot &bot) {
   bot.getEvents().onAnyMessage([&bot, &state](Message::Ptr message) {
     printf("User wrote %s\n", message->text.c_str());
 
-    std::string size{""};
+    string size{""};
     switch (state) {
       case State::Init:
         InitCase(bot, message, state);
@@ -414,7 +394,7 @@ void startprog(Bot &bot) {
     }
   });
 
-  std::signal(SIGINT, signal_handler);
+  signal(SIGINT, signal_handler);
 
   try {
     printf("Bot username: %s\n", bot.getApi().getMe()->username.c_str());

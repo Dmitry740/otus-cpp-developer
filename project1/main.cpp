@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "headers.h"
 
 int main(int argc, char* argv[]) {
