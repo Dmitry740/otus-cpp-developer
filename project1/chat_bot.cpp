@@ -28,6 +28,11 @@ void createKeyboard(const vector<vector<string>> &buttonLayout,
 }
 
 struct MenuText {
+  const string start =
+      "Hi, i'm a rentCar Chatbot and i help you to choose car\n/start for one "
+      "column keyboard\n/layout for a more complex keyboard";
+  const string layout =
+      "/start for one column keyboard\n/layout for a more complex keyboard";
   const string AboutCompany = "Simply - WE ARE THE BEST!!!";
   const string conditions =
       "Give us your pasport, credit card and keys from flat, after that we "
@@ -38,6 +43,18 @@ struct MenuText {
   const string complete =
       "For compleating your rent please enter Lisence number";
   const string exit = "Thank you for your visit! Wait you again";
+};
+
+struct Client {
+  string last_name;
+  string first_name;
+  string license;
+  string car_id;
+  string rented_car;
+  int rent_period = 0;
+  string since;
+  string till;
+  int sum = 0;
 };
 
 enum class State {
@@ -55,48 +72,88 @@ enum class State {
 };
 
 DB Car;
-Client client;
 MenuText menutext;
-State state;
+char *p;
+map<int64_t, Client> client_data;
+map<int64_t, State> chat_states;
 
 void ErrorData(Bot &bot, Message::Ptr message) {
   bot.getApi().sendMessage(message->chat->id, "Wrong data. Please try again");
 }
 
-void ChangeSC(Bot &bot, Message::Ptr message, State &state) {
+void ChangeSC(Bot &bot, Message::Ptr message,
+              map<int64_t, State> &chat_states) {
   if (StringTools::startsWith(message->text, "/start") ||
       StringTools::startsWith(message->text, "/layout")) {
-    state = State::Init;
+    chat_states.insert_or_assign(message->chat->id, State::Init);
   } else if (message->text == "About company") {
-    state = State::Init;
+    chat_states.insert_or_assign(message->chat->id, State::Init);
     bot.getApi().sendMessage(message->chat->id, menutext.AboutCompany);
   } else if (message->text == "Conditions") {
-    state = State::Init;
+    chat_states.insert_or_assign(message->chat->id, State::Init);
     bot.getApi().sendMessage(message->chat->id, menutext.conditions);
   } else if (message->text == "Contacts") {
-    state = State::Init;
+    chat_states.insert_or_assign(message->chat->id, State::Init);
     bot.getApi().sendMessage(message->chat->id, menutext.contacts);
   } else if (message->text == "Exit") {
-    state = State::Init;
+    chat_states.insert_or_assign(message->chat->id, State::Init);
     bot.getApi().sendMessage(message->chat->id, menutext.exit);
   } else if (message->text == "Price of available cars") {
-    state = State::ChooseCar;
+    chat_states.insert_or_assign(message->chat->id, State::ChooseCar);
     bot.getApi().sendMessage(message->chat->id,
                              "To confirm your choose enter \"Y\"");
   } else if (message->text == "My rent") {
-    state = State::MyRent;
+    chat_states.insert_or_assign(message->chat->id, State::MyRent);
     bot.getApi().sendMessage(message->chat->id,
                              "To confirm your choose enter \"Y\"");
   } else if (message->text == "Complete the rent") {
-    state = State::CompleteRent;
+    chat_states.insert_or_assign(message->chat->id, State::CompleteRent);
     bot.getApi().sendMessage(message->chat->id,
                              "To confirm your choose enter \"Y\"");
   } else {
     ErrorData(bot, message);
   }
 }
+void ChangeSCSpec(Bot &bot, Message::Ptr message,
+                  map<int64_t, State> &chat_states) {
+  if (StringTools::startsWith(message->text, "/start") ||
+      StringTools::startsWith(message->text, "/layout")) {
+    chat_states.insert_or_assign(message->chat->id, State::Init);
+  }
+  if (message->text == "About company") {
+    chat_states.insert_or_assign(message->chat->id, State::Init);
+    bot.getApi().sendMessage(message->chat->id, menutext.AboutCompany);
+  }
+  if (message->text == "Conditions") {
+    chat_states.insert_or_assign(message->chat->id, State::Init);
+    bot.getApi().sendMessage(message->chat->id, menutext.conditions);
+  } else if (message->text == "Contacts") {
+    chat_states.insert_or_assign(message->chat->id, State::Init);
+    bot.getApi().sendMessage(message->chat->id, menutext.contacts);
+  }
+  if (message->text == "Exit") {
+    chat_states.insert_or_assign(message->chat->id, State::Init);
+    bot.getApi().sendMessage(message->chat->id, menutext.exit);
+  }
+  if (message->text == "Price of available cars") {
+    chat_states.insert_or_assign(message->chat->id, State::ChooseCar);
+    bot.getApi().sendMessage(message->chat->id,
+                             "To confirm your choose enter \"Y\"");
+  }
+  if (message->text == "My rent") {
+    chat_states.insert_or_assign(message->chat->id, State::MyRent);
+    bot.getApi().sendMessage(message->chat->id,
+                             "To confirm your choose enter \"Y\"");
+  }
+  if (message->text == "Complete the rent") {
+    chat_states.insert_or_assign(message->chat->id, State::CompleteRent);
+    bot.getApi().sendMessage(message->chat->id,
+                             "To confirm your choose enter \"Y\"");
+  }
+}
 
-void InitCase(Bot &bot, Message::Ptr message, State &state) {
+void InitCase(Bot &bot, Message::Ptr message,
+              map<int64_t, State> &chat_states) {
   if (StringTools::startsWith(message->text, "/start") ||
       StringTools::startsWith(message->text, "/layout")) {
   } else if (message->text == "About company") {
@@ -109,64 +166,68 @@ void InitCase(Bot &bot, Message::Ptr message, State &state) {
     bot.getApi().sendMessage(message->chat->id, menutext.exit);
     return;
   } else if (message->text == "My rent") {
-    state = State::MyRent;
+    chat_states.insert_or_assign(message->chat->id, State::MyRent);
     bot.getApi().sendMessage(message->chat->id,
                              "To confirm your choose enter \"Y\"");
   } else if (message->text == "Price of available cars") {
-    state = State::ChooseCar;
+    chat_states.insert_or_assign(message->chat->id, State::ChooseCar);
     bot.getApi().sendMessage(message->chat->id,
                              "To confirm your choose enter \"Y\"");
   } else if (message->text == "Complete the rent") {
-    state = State::CompleteRent;
+    chat_states.insert_or_assign(message->chat->id, State::CompleteRent);
     bot.getApi().sendMessage(message->chat->id,
                              "To confirm your choose enter \"Y\"");
   }
 }
 
-void MyRentCase(Bot &bot, Message::Ptr message, State &state) {
+void MyRentCase(Bot &bot, Message::Ptr message,
+                map<int64_t, State> &chat_states) {
   if (message->text == "Y") {
     bot.getApi().sendMessage(message->chat->id, "Enter License number");
-    state = State::RentData;
+    chat_states.insert_or_assign(message->chat->id, State::RentData);
   } else {
-    ChangeSC(bot, message, state);
+    ChangeSC(bot, message, chat_states);
   }
 }
 
-void RentDataCase(Bot &bot, Message::Ptr message, State &state, string &size) {
+void RentDataCase(Bot &bot, Message::Ptr message, string &size,
+                  map<int64_t, State> &chat_states) {
   size = message->text;
-  char *p;
-  if ((size.size() == 10) & strtol(size.c_str(), &p, 10)) {
+  if (size.size() == 10 && strtol(size.c_str(), &p, 10)) {
     qq.str("");
     Car.ClientGetLicenese(message->text);
     if (qq.str() == message->text) {
       ss.str("");
       Car.PrintClientData(message->text);
       bot.getApi().sendMessage(message->chat->id, "Your rent \n" + ss.str());
-      state = State::Init;
+      chat_states.insert_or_assign(message->chat->id, State::Init);
     } else if (message->text == "Exit") {
-      state = State::Init;
+      chat_states.insert_or_assign(message->chat->id, State::Init);
       bot.getApi().sendMessage(message->chat->id, menutext.exit);
     } else {
-      ChangeSC(bot, message, state);
+      ChangeSC(bot, message, chat_states);
     }
   } else {
-    ChangeSC(bot, message, state);
+    ChangeSC(bot, message, chat_states);
   }
 }
 
-void ChooseCarCase(Bot &bot, Message::Ptr message, State &state) {
+void ChooseCarCase(Bot &bot, Message::Ptr message,
+                   map<int64_t, State> &chat_states) {
   if (message->text == "Y") {
     ss.str("");
     Car.PrintCarData();
     ss << "\nEnter Car ID to rent";
     bot.getApi().sendMessage(message->chat->id, ss.str());
-    state = State::Wait4Carid;
+    chat_states.insert_or_assign(message->chat->id, State::Wait4Carid);
   } else {
-    ChangeSC(bot, message, state);
+    ChangeSC(bot, message, chat_states);
   }
 }
 
-void W4CarIdCase(Bot &bot, Message::Ptr message, State &state) {
+void W4CarIdCase(Bot &bot, Message::Ptr message,
+                 map<int64_t, State> &chat_states,
+                 map<int64_t, Client> &client_data) {
   if (message->text == "1" || message->text == "2" || message->text == "3" ||
       message->text == "4" || message->text == "5") {
     qq.str("");
@@ -175,125 +236,205 @@ void W4CarIdCase(Bot &bot, Message::Ptr message, State &state) {
       bot.getApi().sendMessage(message->chat->id,
                                "Car under ID " + message->text +
                                    " is reserved, please choose another one");
+    } else {
+      Car.SetCarReserve(message->text);
+      client_data[message->chat->id];
+      auto temp = client_data.find(message->chat->id);
+      if (temp != client_data.end()) {
+        temp->second.car_id = message->text;
+
+        qq.str("");
+        Car.CarName(message->text);
+        temp->second.rented_car = qq.str();
+
+        qq.str("");
+        Car.CarPrice(message->text);
+        temp->second.sum = stoi(qq.str());
+      } else {
+        chat_states.insert_or_assign(message->chat->id, State::Init);
+      }
+      bot.getApi().sendMessage(
+          message->chat->id,
+          "To rent Car under ID " + message->text + " enter Last Name");
+      chat_states.insert_or_assign(message->chat->id, State::Wait4Lastname);
     }
-    Car.SetCarReserve(message->text);
-    client.car_id = message->text;
-    qq.str("");
-    Car.CarName(message->text);
-    client.rented_car = qq.str();
-    qq.str("");
-    Car.CarPrice(message->text);
-    client.sum = stoi(qq.str());
-
-    bot.getApi().sendMessage(
-        message->chat->id,
-        "To rent Car under ID " + message->text + " enter Last Name");
-    state = State::Wait4Lastname;
   } else {
-    ChangeSC(bot, message, state);
+    ChangeSC(bot, message, chat_states);
   }
 }
 
-void W4LastNameCase(Bot &bot, Message::Ptr message, State &state) {
+void W4LastNameCase(Bot &bot, Message::Ptr message,
+                    map<int64_t, State> &chat_states,
+                    map<int64_t, Client> &client_data) {
   if (StringTools::startsWith(message->text, "/start") ||
       StringTools::startsWith(message->text, "/layout") ||
       message->text == "About company" || message->text == "Conditions" ||
       message->text == "Contacts" || message->text == "Exit" ||
       message->text == "Price of available cars" ||
       message->text == "Complete the rent" || message->text == "My rent") {
-    state = State::Init;
-    Car.RemoveCarReserve(client.car_id);
-    bot.getApi().sendMessage(message->chat->id, "Try again");
+    auto id = client_data.find(message->chat->id);
+    if (id != client_data.end()) {
+      Car.RemoveCarReserve(id->second.car_id);
+      client_data.erase(id->first);
+    } else {
+      chat_states.insert_or_assign(message->chat->id, State::Init);
+    }
+    ChangeSCSpec(bot, message, chat_states);
   } else {
-    client.last_name = message->text;
+    auto temp = client_data.find(message->chat->id);
+    if (temp != client_data.end()) {
+      temp->second.last_name = message->text;
+    } else {
+      chat_states.insert_or_assign(message->chat->id, State::Init);
+    }
+    chat_states.insert_or_assign(message->chat->id, State::Wait4Firstname);
     bot.getApi().sendMessage(message->chat->id, "Enter First Name");
-    state = State::Wait4Firstname;
   }
 }
 
-void W4FirstNameCase(Bot &bot, Message::Ptr message, State &state) {
+void W4FirstNameCase(Bot &bot, Message::Ptr message,
+                     map<int64_t, State> &chat_states,
+                     map<int64_t, Client> &client_data) {
   if (StringTools::startsWith(message->text, "/start") ||
       StringTools::startsWith(message->text, "/layout") ||
       message->text == "About company" || message->text == "Conditions" ||
       message->text == "Contacts" || message->text == "Exit" ||
       message->text == "Price of available cars" ||
       message->text == "Complete the rent" || message->text == "My rent") {
-    state = State::Init;
-    Car.RemoveCarReserve(client.car_id);
-    bot.getApi().sendMessage(message->chat->id, "Try again");
+    auto id = client_data.find(message->chat->id);
+    if (id != client_data.end()) {
+      Car.RemoveCarReserve(id->second.car_id);
+      client_data.erase(id->first);
+    } else {
+      chat_states.insert_or_assign(message->chat->id, State::Init);
+    }
+    ChangeSCSpec(bot, message, chat_states);
   } else {
-    client.first_name = message->text;
+    auto temp = client_data.find(message->chat->id);
+    if (temp != client_data.end()) {
+      temp->second.first_name = message->text;
+    } else {
+      chat_states.insert_or_assign(message->chat->id, State::Init);
+    }
+    chat_states.insert_or_assign(message->chat->id, State::Wait4Lisence);
     bot.getApi().sendMessage(message->chat->id, "Enter License number");
-    state = State::Wait4Lisence;
   }
 }
 
-void W4LicenseCase(Bot &bot, Message::Ptr message, State &state, string &size) {
+void W4LicenseCase(Bot &bot, Message::Ptr message, string &size,
+                   map<int64_t, State> &chat_states,
+                   map<int64_t, Client> &client_data) {
   if (StringTools::startsWith(message->text, "/start") ||
       StringTools::startsWith(message->text, "/layout") ||
       message->text == "About company" || message->text == "Conditions" ||
       message->text == "Contacts" || message->text == "Exit" ||
       message->text == "Price of available cars" ||
       message->text == "Complete the rent" || message->text == "My rent") {
-    state = State::Init;
-    Car.RemoveCarReserve(client.car_id);
-    bot.getApi().sendMessage(message->chat->id, "Try again");
+    auto id = client_data.find(message->chat->id);
+    if (id != client_data.end()) {
+      Car.RemoveCarReserve(id->second.car_id);
+      client_data.erase(id->first);
+    } else {
+      chat_states.insert_or_assign(message->chat->id, State::Init);
+    }
+    ChangeSCSpec(bot, message, chat_states);
   } else {
     size = message->text;
-    char *p;
-    if ((size.size() == 10) & strtol(size.c_str(), &p, 10)) {
-      client.license = message->text;
+    if (size.size() == 10 && strtol(size.c_str(), &p, 10)) {
+      auto temp = client_data.find(message->chat->id);
+      if (temp != client_data.end()) {
+        temp->second.license = message->text;
+      } else {
+        chat_states.insert_or_assign(message->chat->id, State::Init);
+      }
       bot.getApi().sendMessage(message->chat->id, "Enter rent period in days");
-      state = State::Wait4Period;
+      chat_states.insert_or_assign(message->chat->id, State::Wait4Period);
     } else {
       ErrorData(bot, message);
     }
   }
 }
 
-void W4PeriodCase(Bot &bot, Message::Ptr message, State &state) {
+void Time(Message::Ptr message, int &rent_period,
+          map<int64_t, Client> &client_data) {
+  struct tm ltm;
+  time_t now = time(0);
+  localtime_s(&ltm, &now);
+  qq.str("");
+  qq << ltm.tm_mday << "." << ltm.tm_mon + 1 << "." << ltm.tm_year + 1900;
+  auto temp = client_data.find(message->chat->id);
+  temp->second.since = qq.str();
+
+  now += rent_period * 24 * 3600;
+  localtime_s(&ltm, &now);
+  qq.str("");
+  qq << ltm.tm_mday << "." << ltm.tm_mon + 1 << "." << ltm.tm_year + 1900;
+  temp->second.till = qq.str();
+}
+
+void W4PeriodCase(Bot &bot, Message::Ptr message,
+                  map<int64_t, State> &chat_states,
+                  map<int64_t, Client> &client_data) {
   if (StringTools::startsWith(message->text, "/start") ||
       StringTools::startsWith(message->text, "/layout") ||
       message->text == "About company" || message->text == "Conditions" ||
       message->text == "Contacts" || message->text == "Exit" ||
       message->text == "Price of available cars" ||
       message->text == "Complete the rent" || message->text == "My rent") {
-    state = State::Init;
-    Car.RemoveCarReserve(client.car_id);
-    bot.getApi().sendMessage(message->chat->id, "Try again");
+    auto id = client_data.find(message->chat->id);
+    if (id != client_data.end()) {
+      Car.RemoveCarReserve(id->second.car_id);
+      client_data.erase(id->first);
+    } else {
+      chat_states.insert_or_assign(message->chat->id, State::Init);
+    }
+    ChangeSCSpec(bot, message, chat_states);
   }
-  char *p;
   if (strtol(message->text.c_str(), &p, 10)) {
-    client.rent_period = stoi(message->text);
-    client.sum *= client.rent_period;
-    Car.InsertClientData(client.last_name, client.first_name, client.license,
-                         client.car_id, client.rented_car, client.rent_period,
-                         client.sum);
-    ss.str("");
-    Car.PrintClientData(client.license);
-    bot.getApi().sendMessage(
-        message->chat->id,
-        "Congratilations! You reserve car.\n Your order: \n" + ss.str() +
-            "\n Bon Voyage!");
-    state = State::Init;
+    auto temp = client_data.find(message->chat->id);
+    if (temp != client_data.end()) {
+      temp->second.rent_period = stoi(message->text);
+      auto sum = temp->second.sum;
+      auto period = temp->second.rent_period;
+      auto res = sum * period;
+      temp->second.sum = res;
+      Time(message, period, client_data);
+
+      Car.InsertClientData(temp->second.last_name, temp->second.first_name,
+                           temp->second.license, temp->second.car_id,
+                           temp->second.rented_car, temp->second.rent_period,
+                           temp->second.since, temp->second.till,
+                           temp->second.sum);
+      ss.str("");
+      Car.PrintClientData(temp->second.license);
+      bot.getApi().sendMessage(
+          message->chat->id,
+          "Congratilations! You reserve car.\n Your order: \n" + ss.str() +
+              "\n Bon Voyage!");
+    } else {
+      chat_states.insert_or_assign(message->chat->id, State::Init);
+    }
+    chat_states.insert_or_assign(message->chat->id, State::Init);
+    client_data.erase(temp->first);
   } else {
     ErrorData(bot, message);
   }
 }
 
-void W4ComplRentCase(Bot &bot, Message::Ptr message, State &state) {
+void W4ComplRentCase(Bot &bot, Message::Ptr message,
+                     map<int64_t, State> &chat_states) {
   if (message->text == "Y") {
     bot.getApi().sendMessage(message->chat->id, menutext.complete);
-    state = State::Wait4completeId;
+    chat_states.insert_or_assign(message->chat->id, State::Wait4completeId);
   } else {
-    ChangeSC(bot, message, state);
+    ChangeSC(bot, message, chat_states);
   }
 }
 
-void W4ComplIdCase(Bot &bot, Message::Ptr message, State &state, string &size) {
+void W4ComplIdCase(Bot &bot, Message::Ptr message, string &size,
+                   map<int64_t, State> &chat_states) {
   size = message->text;
-  char *p;
-  if ((size.size() == 10) & strtol(size.c_str(), &p, 10)) {
+  if (size.size() == 10 && strtol(size.c_str(), &p, 10)) {
     qq.str("");
     Car.ClientGetLicenese(message->text);
     if (qq.str() == message->text) {
@@ -307,12 +448,13 @@ void W4ComplIdCase(Bot &bot, Message::Ptr message, State &state, string &size) {
       bot.getApi().sendMessage(message->chat->id,
                                "Your rent is completed!\n" + ss.str() +
                                    "\n Thank you. Wait you again");
-      state = State::Init;
+      chat_states.insert_or_assign(message->chat->id, State::Init);
+      chat_states.erase(message->chat->id);
     } else {
-      ChangeSC(bot, message, state);
+      ChangeSC(bot, message, chat_states);
     }
   } else {
-    ChangeSC(bot, message, state);
+    ChangeSC(bot, message, chat_states);
   }
 }
 
@@ -333,63 +475,67 @@ void startprog(Bot &bot) {
 
   bot.getEvents().onCommand(
       "start", [&bot, &keyboardOneCol](Message::Ptr message) {
-        bot.getApi().sendMessage(
-            message->chat->id,
-            "Hi, i'm a rentCar Chatbot and i help you to choose car\n/start "
-            "for one column keyboard\n/layout for a more complex keyboard",
-            false, 0, keyboardOneCol);
+        bot.getApi().sendMessage(message->chat->id, menutext.start, false, 0,
+                                 keyboardOneCol);
+        chat_states.insert_or_assign(message->chat->id, State::Init);
       });
-  bot.getEvents().onCommand("layout", [&bot, &keyboardWithLayout](
-                                          Message::Ptr message) {
-    bot.getApi().sendMessage(
-        message->chat->id,
-        "/start for one column keyboard\n/layout for a more complex keyboard",
-        false, 0, keyboardWithLayout);
-  });
+  bot.getEvents().onCommand(
+      "layout", [&bot, &keyboardWithLayout](Message::Ptr message) {
+        bot.getApi().sendMessage(message->chat->id, menutext.layout, false, 0,
+                                 keyboardWithLayout);
+        chat_states.insert_or_assign(message->chat->id, State::Init);
+      });
 
-  State state = State::Init;
-
-  bot.getEvents().onAnyMessage([&bot, &state](Message::Ptr message) {
+  bot.getEvents().onAnyMessage([&bot](Message::Ptr message) {
     printf("User wrote %s\n", message->text.c_str());
+
+    State state;
+    auto id = chat_states.find(message->chat->id);
+    if (id != chat_states.end()) {
+      state = id->second;
+    } else {
+      chat_states.insert_or_assign(message->chat->id, State::Init);
+      state = State::Init;
+    }
 
     string size{""};
     switch (state) {
       case State::Init:
-        InitCase(bot, message, state);
+        InitCase(bot, message, chat_states);
         break;
       case State::MyRent:
-        MyRentCase(bot, message, state);
+        MyRentCase(bot, message, chat_states);
         break;
       case State::RentData:
-        RentDataCase(bot, message, state, size);
+        RentDataCase(bot, message, size, chat_states);
         break;
       case State::ChooseCar:
-        ChooseCarCase(bot, message, state);
+        ChooseCarCase(bot, message, chat_states);
         break;
       case State::Wait4Carid:
-        W4CarIdCase(bot, message, state);
+        W4CarIdCase(bot, message, chat_states, client_data);
         break;
       case State::Wait4Lastname:
-        W4LastNameCase(bot, message, state);
+        W4LastNameCase(bot, message, chat_states, client_data);
         break;
       case State::Wait4Firstname:
-        W4FirstNameCase(bot, message, state);
+        W4FirstNameCase(bot, message, chat_states, client_data);
         break;
       case State::Wait4Lisence:
-        W4LicenseCase(bot, message, state, size);
+        W4LicenseCase(bot, message, size, chat_states, client_data);
         break;
       case State::Wait4Period:
-        W4PeriodCase(bot, message, state);
+        W4PeriodCase(bot, message, chat_states, client_data);
         break;
       case State::CompleteRent:
-        W4ComplRentCase(bot, message, state);
+        W4ComplRentCase(bot, message, chat_states);
         break;
       case State::Wait4completeId:
-        W4ComplIdCase(bot, message, state, size);
+        W4ComplIdCase(bot, message, size, chat_states);
         break;
       default:
         ErrorData(bot, message);
-        state = State::Init;
+        chat_states.insert_or_assign(message->chat->id, State::Init);
         break;
     }
   });
