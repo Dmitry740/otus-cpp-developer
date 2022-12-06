@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #pragma comment(lib, "C:/src/vcpkg/vcpkg/installed/x64-windows/lib/sqlite3.lib")
 
+#include "db.h"
 #include "headers.h"
 
 TEST(DB, car_check_reserve) {

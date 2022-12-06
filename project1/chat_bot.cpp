@@ -1,3 +1,4 @@
+#include "db.h"
 #include "headers.h"
 
 extern stringstream ss;
@@ -164,7 +165,6 @@ void InitCase(Bot &bot, Message::Ptr message,
     bot.getApi().sendMessage(message->chat->id, menutext.contacts);
   } else if (message->text == "Exit") {
     bot.getApi().sendMessage(message->chat->id, menutext.exit);
-    return;
   } else if (message->text == "My rent") {
     chat_states.insert_or_assign(message->chat->id, State::MyRent);
     bot.getApi().sendMessage(message->chat->id,
