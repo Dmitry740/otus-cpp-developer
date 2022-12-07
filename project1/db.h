@@ -23,8 +23,8 @@ class DB {
 
  public:
   DB();
-  DB(const DB &) = default;
-  DB &operator=(const DB &) = default;
+  DB(const DB &) = delete;
+  DB &operator=(const DB &) = delete;
 
   DB(DB &&other) noexcept {
     db = other.db;
@@ -45,8 +45,20 @@ class DB {
     if (this == &rhs) {
       return *this;
     }
-    DB temp{move(rhs)};
-    return *this = temp;
+    db = rhs.db;
+    rhs.db = nullptr;
+    ErrMsg = rhs.ErrMsg;
+    rhs.ErrMsg = nullptr;
+    rc = rhs.rc;
+    rhs.rc = 0;
+    sql = rhs.sql;
+    rhs.sql = nullptr;
+    query = rhs.query;
+    rhs.query = nullptr;
+    filename = rhs.filename;
+    rhs.filename = nullptr;
+
+    return *this;
   }
 
   ~DB();
