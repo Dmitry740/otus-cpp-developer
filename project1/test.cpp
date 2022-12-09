@@ -7,7 +7,7 @@
 TEST(DB, car_check_reserve) {
   DB TestDB;
   extern stringstream qq;
-  string a = "2";
+  string a = "1";
 
   TestDB.CheckCarReserve(a);
 
@@ -34,7 +34,7 @@ TEST(DB, car_name) {
 
   TestDB.CarName(a);
 
-  ASSERT_EQ(qq.str(), "Toyota Camry");
+  ASSERT_EQ(qq.str(), "BMW M3");
 }
 
 TEST(DB, car_price) {
@@ -68,11 +68,50 @@ TEST(DB, client_license) {
   DB TestDB;
   extern stringstream qq;
   qq.str("");
-  string a = "1234567899";
+  string a = "9898989898";
 
   TestDB.ClientGetLicenese(a);
 
   ASSERT_EQ(qq.str(), a);
+}
+
+TEST(Bot, final_auto) {
+  State state;
+  int id = 0;
+  map<int, State> chat_states = {
+      {1, State::Init}, {2, State::MyRent}, {3, State::ChooseCar}};
+  for (auto temp : chat_states) {
+    id = temp.first;
+    state = temp.second;
+
+    switch (state) {
+      case State::Init:
+        chat_states.insert_or_assign(id, State::MyRent);
+        break;
+      case State::MyRent:
+        chat_states.insert_or_assign(id, State::ChooseCar);
+        break;
+      case State::ChooseCar:
+        chat_states.insert_or_assign(id, State::Init);
+        break;
+    }
+  }
+
+  for (const auto temp : chat_states) {
+    if (temp.first == 1) {
+      EXPECT_EQ(temp.second, State::MyRent);
+    }
+  }
+  for (const auto temp : chat_states) {
+    if (temp.first == 2) {
+      EXPECT_EQ(temp.second, State::ChooseCar);
+    }
+  }
+  for (const auto temp : chat_states) {
+    if (temp.first == 3) {
+      EXPECT_EQ(temp.second, State::Init);
+    }
+  }
 }
 
 int main(int argc, char** argv) {
